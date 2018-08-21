@@ -1,17 +1,16 @@
-node {
- 	// Clean workspace before doing anything
-    deleteDir()
-
-    stage ('Clone') {
-        checkout scm
-    }
-    stage ('Install dependencies') {
-        sh "echo 'run pip install -r requirements.txt'"
-    }
-    stage ('Build') {
-        sh "echo 'shell scripts to build project...'"
-    }
-    stage ('Tests') {
-	sh "py.test test.py"
-    }
+pipeline {
+    agent none
+    stages {
+       stage ('Test') {
+         agent {
+	    dockerfile true
+         }
+          steps {
+	    withEnv(["HOME=${env.WORKSPACE}"]) {
+	     sh "pip3 install --user -r requirements.txt" 
+             sh "py.test-3.5 test.py"
+          }
+           }
+       }
+}
 }
